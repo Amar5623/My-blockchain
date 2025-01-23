@@ -6,6 +6,7 @@ import requests
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from uuid import uuid4
+import sys
 
 class Blockchain:
     def __init__(self):
@@ -40,7 +41,7 @@ class Blockchain:
                 check_proof = True
             else:
                 new_proof += 1
-            return new_proof
+        return new_proof
     
     def hash(self, block):
         encoded_block = json.dumps(block, sort_keys = True).encode()
@@ -55,7 +56,7 @@ class Blockchain:
                 return False
             previous_proof = previous_block["proof"]
             proof = block["proof"]
-            hash_operation = hashlib.sha256(str(proof**2 - previous_proof**2).encode()).hexdigest()
+            hash_operation = hashlib.sha256(str(proof*2 - previous_proof*2).encode()).hexdigest()
             if hash_operation[:4] != '00000':
                 return False
             previous_block = block
@@ -88,13 +89,14 @@ class Blockchain:
         network = self.nodes
         Longest_chain = None
         max_length = len(self.chain)
-        response = requests.get(f'https://{node}/get_chain')
-        if response.status_code == 200:
-            length = response.json()['length']
-            chain = response.json()['chain']
-            if length > max_length and self.is_chain_valid(chain):
-                max_length = length
-                Longest_chain = chain
+        for node in network:
+            response = requests.get(f'http://{node}/get_chain')
+            if response.status_code == 200:
+                length = response.json()['length']
+                chain = response.json()['chain']
+                if length > max_length and self.is_chain_valid(chain):
+                    max_length = length
+                    Longest_chain = chain
         if Longest_chain:
             self.chain = Longest_chain
             return True
@@ -135,6 +137,7 @@ def get_chain():
         "active_nodes": list(blockchain.nodes),
         "length": len(blockchain.chain),
     }
+    return jsonify(response), 200
 
 @app.route("/is_valid", methods=["GET"])
 def is_valid():
@@ -162,7 +165,7 @@ def add_transactions():
 
 @app.route('/connect_node', methods=['POST'])
 def connect_node():
-    json = request.json()
+    json = request.get_json()
     nodes = json.get('nodes')
     if nodes is None:
         return "No Node", 400
@@ -190,4 +193,8 @@ def replace_chain():
         }
     return jsonify(response), 200
 
-app.run(host='0.0.0.0', port = 5000, debug = True)
+if __name__ == '__main__':
+    port = 5000
+    if len(sys.argv) > 1:
+        port = int(sys.argv[1]) 
+    app.run(host='0.0.0.0', port=port)
