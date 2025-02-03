@@ -23,7 +23,7 @@ function BlockChainScreen() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch("http://localhost:5000/get_chain")
+      const response = await fetch("https://my-blockchain.onrender.com/get_chain")
       const result = await response.json()
       if (result) setBlocks(result.chain)
     }

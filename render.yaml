@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: blockchain-backend
+    env: python
+    buildCommand: pip install -r server/requirements.txt
+    startCommand: python node.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0

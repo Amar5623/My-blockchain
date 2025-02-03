@@ -40,7 +40,7 @@ export default function AddTxnForm({ open, handleClose }) {
 
     setLoading(true)
     try {
-      const response = await axios.post("http://localhost:5000/add_transaction", state)
+      const response = await axios.post("https://my-blockchain.onrender.com/add_transaction", state)
       alert(response.data.message)
       handleClose()
       setState({ sender: "", receiver: "", amount: "" })

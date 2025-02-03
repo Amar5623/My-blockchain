@@ -38,7 +38,7 @@ const Header = () => {
 
   const mineBlock = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/mine_block")
+      const response = await axios.get("https://my-blockchain.onrender.com/mine_block")
       alert(`${response.data.message}\nRefresh Page to see new blocks!`)
       window.location.reload()
     } catch (error) {
