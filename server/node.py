@@ -1,3 +1,4 @@
+#server\node.py
 import datetime
 import hashlib
 import json
@@ -117,7 +118,6 @@ def mine_block():
     previous_proof = previous_block['proof']
     previous_hash = previous_block["hash"]
     proof = blockchain.proof_of_work(previous_proof)
-    blockchain.add_transaction(sender = node_address, receiver = 'Miner', amount = 100)
     block = blockchain.create_block(proof, previous_hash)
     response = {
         "message": "Congratulations, you have mined a block!",
