@@ -106,7 +106,13 @@ class Blockchain:
 
 app =Flask(__name__)
 
-CORS(app, resources={r"/*": {"origins": "https://amars-blockchain.netlify.app/"}})
+CORS(app, resources={
+    r"/*": {
+        "origins": ["https://amars-blockchain.netlify.app", "http://localhost:3000"],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
+})
 
 node_address = str(uuid4()).replace("-",'')
 
@@ -149,8 +155,12 @@ def is_valid():
         response = {"message": "The blockchain is not valid."}
     return jsonify(response), 200
         
-@app.route('/add_transaction', methods = ['POST'])
+@app.route('/add_transaction', methods=['POST', 'OPTIONS'])
 def add_transactions():
+    if request.method == 'OPTIONS':
+        # Handle preflight request
+        return '', 204
+        
     json = request.json
     transaction_keys = ["sender", "receiver", "amount"]
 
