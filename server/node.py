@@ -106,7 +106,7 @@ class Blockchain:
 
 app =Flask(__name__)
 
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "https://amars-blockchain.netlify.app/"}})
 
 node_address = str(uuid4()).replace("-",'')
 
